@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <style>
+        #player {
+            background-color: lightblue;
+            width: 500px;
+            height: 300px;
+            position: absolute;
+            right: 0.5%;
+            top: 0.5%;
+            transition: left 0.05s, top 0.05s; /* Smooth transition */
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: green;
+        }
+        #start-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #ff9900;
+            border: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <button id="start-button">Start Game</button>
+    <img src="./plerej.png" id="player" style="display: none;">
+    <script>
+        const player = document.querySelector('#player');
+        const startButton = document.querySelector('#start-button');
+        
+        let horizontal = 50;
+        let vertical = 70;
+        let direction = {};
+
+        // Create audio object
+        const audio = new Audio('miusik.mp3');
+
+        // Wait for user interaction to play audio
+        startButton.addEventListener('click', function() {
+            audio.play().catch(function(error) {
+                console.log("Autoplay blocked, user interaction needed to play sound.");
+            });
+
+            // Hide the start button and show the player
+            startButton.style.display = 'none';
+            player.style.display = 'block';
+        });
+
+        player.style.left = (horizontal + "%");
+        player.style.top = (vertical + "%");
+
+        document.addEventListener("keydown", move);
+        document.addEventListener("keyup", stopMove);
+
+        function move(event) {
+            direction[event.key] = true;
+        }
+
+        function stopMove(event) {
+            direction[event.key] = false;
+        }
+
+        function update() {
+            if (direction['a']) {
+                horizontal -= 2;  
+            }
+            if (direction['d']) {
+                horizontal += 2;  
+            }
+            if (direction['w']) {
+                vertical -= 2;  
+            }
+            if (direction['s']) {
+                vertical += 2;  
+            }
+
+            // Check if player goes off the screen and loop it to the opposite side
+            if (horizontal < 0) {
+                horizontal = 100; // Player goes to the right side
+            }
+            if (horizontal > 100) {
+                horizontal = 0; // Player goes to the left side
+            }
+            if (vertical < 0) {
+                vertical = 100; // Player goes to the bottom
+            }
+            if (vertical > 100) {
+                vertical = 0; // Player goes to the top
+            }
+
+            player.style.left = (horizontal + "%");
+            player.style.top = (vertical + "%");
+
+            requestAnimationFrame(update);
+        }
+
+        update();
+    </script>
+</body>
+</html>
